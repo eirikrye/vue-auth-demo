@@ -1,5 +1,9 @@
 # vue-auth-demo
 
+Example Vue application with simple Python backend server to demonstrate building Vue applications using an HTTP API as a backend.
+
+`npm run serve` will automatically proxy API requests to the python server running at `localhost:8181` (see below).
+
 ## node
 
 ### Project setup
