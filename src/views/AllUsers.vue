@@ -35,6 +35,7 @@ export default {
       let response = await API.get("/users")
       this.users = response.data
     } catch (err) {
+      console.log(err)
     } finally {
       this.$store.commit("subLoading")
     }
