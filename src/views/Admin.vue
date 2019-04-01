@@ -2,7 +2,7 @@
   <section class="section">
     <div class="container">
       <h1 class="title">Admin panel</h1>
-      <div class="content">Wow, you are an admin! Not every can see this amazing page.</div>
+      <div class="content">Wow, you are an admin! Not everyone can see this amazing page.</div>
     </div>
   </section>
 </template>
