@@ -83,29 +83,18 @@ const store = new Vuex.Store({
         context.commit("subLoading")
       }
     },
-    createRandomNotification(context) {
-      let notification = {
-        severity: 'success',
-        contents: "Hello World!"
+    async getProfile(context) {
+      context.commit("incLoading")
+      try {
+        let result = await API.get("/me")
+        let user = result.data
+        context.commit("loadUser", user)
+        return Promise.resolve(user)
+      } catch (err) {
+        return Promise.reject(err)
+      } finally {
+        context.commit("subLoading")
       }
-      context.commit('addNotification', notification)
-    },
-    getProfile(context) {
-      return new Promise((resolve, reject) => {
-        context.commit("incLoading")
-        API.get("/me")
-          .then(result => {
-            let user = result.data
-            context.commit("loadUser", user)
-            resolve(user)
-          })
-          .catch(error => {
-            reject(error)
-          })
-          .finally(() => {
-            context.commit("subLoading")
-          })
-      })
     },
     async updateProfile(context, newProfile) {
       const data = {
@@ -120,11 +109,13 @@ const store = new Vuex.Store({
           "severity": "success",
           "contents": "Profile updated!"
         })
+        return Promise.resolve()
       } catch (err) {
         context.commit("addNotification", {
           "severity": "danger",
           "contents": "Failed to update profile!"
         })
+        return Promise.reject(err)
       } finally {
         context.commit("subLoading")
       }
