@@ -23,20 +23,20 @@ RANDOM_SLEEP_TIME = 0
 
 # Ad hoc dict to hold users with plaintext passwords
 users = {
-    "eirik.rye@gmail.com": {
+    "rye@trojka.no": {
         "password": "eirik123",
         "admin": True,
         "profile": {"fullName": "Eirik Rye", "favouriteAnimal": "Bird"},
     },
-    "henrik.gabrielsen@gmail.com": {
-        "password": "gabbeh2102",
+    "walking.the.planck@example.com": {
+        "password": "quanta01",
         "admin": False,
-        "profile": {"fullName": "Henrik Gabrielsen", "favouriteAnimal": "Sloth"},
+        "profile": {"fullName": "Max Planck", "favouriteAnimal": "Sloth"},
     },
-    "ola.nordmann@gmail.com": {
-        "password": "ola2306",
+    "stargazer1750@example.com": {
+        "password": "dirty-telescope-pole",
         "admin": False,
-        "profile": {"fullName": "Ola Nordmann", "favouriteAnimal": "Cat"},
+        "profile": {"fullName": "Caroline Herschel", "favouriteAnimal": "Cat"},
     },
 }
 
