@@ -103,7 +103,10 @@ class ProfileResource:
         user = req.context["user"]
         data: dict = json.load(req.stream)
 
-        user.update(data)
+        if "profile" not in data:
+            raise falcon.HTTPBadRequest("Expected 'profile' in request.")
+
+        user["profile"].update(data["profile"])
 
         resp.media = {
             "id": user["id"],
