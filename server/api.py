@@ -18,9 +18,10 @@ logger = logging.getLogger(__name__)
 # amount of seconds to emulate a slow connection, allowing time to see
 # spinners, loaders and transitions.
 #
-# Set to 0 to disable sleep.
+# Set to 0 to disable sleep
 RANDOM_SLEEP_TIME = 0
 
+# Ad hoc dict to hold users with plaintext passwords
 users = {
     "eirik.rye@gmail.com": {
         "password": "eirik123",
@@ -47,6 +48,19 @@ for user_id, (username, user) in enumerate(users.items()):
 tokens: Dict[str, str] = {}
 
 
+def user_to_dict(user: dict) -> dict:
+    """Turn a user dict into a representation suitable for output.
+
+    That is, a representation that does not expose the user's password.
+    """
+    return dict(
+        id=user["id"],
+        username=user["username"],
+        admin=user["admin"],
+        profile=user["profile"],
+    )
+
+
 def authenticate(req: Request, resp: Response, resource, params):
     """Falcon hook to ensure a request is authenticated.
     
@@ -68,7 +82,11 @@ class LoginResource:
     """Resource to authenticate and return API token."""
 
     def on_post(self, req: Request, resp: Response):
-        data: dict = json.load(req.stream)
+        try:
+            data = json.load(req.stream)
+        except json.JSONDecodeError:
+            raise falcon.HTTPBadRequest("Invalid JSON.")
+
         username = data.get("username", "").lower()
         password = data.get("password")
 
@@ -92,28 +110,21 @@ class ProfileResource:
 
     def on_get(self, req: Request, resp: Response):
         user = req.context["user"]
-        resp.media = {
-            "id": user["id"],
-            "username": user["username"],
-            "admin": user["admin"],
-            "profile": user["profile"],
-        }
+        resp.media = user_to_dict(user)
 
     def on_patch(self, req: Request, resp: Response):
-        user = req.context["user"]
-        data: dict = json.load(req.stream)
+        try:
+            data = json.load(req.stream)
+        except json.JSONDecodeError:
+            raise falcon.HTTPBadRequest("Invalid JSON.")
 
         if "profile" not in data:
             raise falcon.HTTPBadRequest("Expected 'profile' in request.")
 
+        user = req.context["user"]
         user["profile"].update(data["profile"])
 
-        resp.media = {
-            "id": user["id"],
-            "username": user["username"],
-            "admin": user["admin"],
-            "profile": user["profile"],
-        }
+        resp.media = user_to_dict(user)
 
 
 @falcon.before(authenticate)
@@ -121,14 +132,7 @@ class UsersResource:
     """Resource to list users."""
 
     def on_get(self, req: Request, resp: Response):
-        resp.media = [
-            {
-                "username": user["username"],
-                "admin": user["admin"],
-                "profile": user["profile"],
-            }
-            for user in users.values()
-        ]
+        resp.media = [user_to_dict(user) for user in users.values()]
 
 
 class RandomSleepMiddleware:
