@@ -3,6 +3,9 @@ import Vuex from "vuex"
 
 import { API, setAPIToken } from "./api"
 
+// https://gist.github.com/jed/982883
+let generateUUID = a => a ? (a ^ Math.random() * 16 >> a / 4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, generateUUID)
+
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -12,7 +15,8 @@ const store = new Vuex.Store({
     isAdmin: false,
     apiToken: "",
     userProfile: null,
-    numLoading: 0
+    numLoading: 0,
+    notifications: []
   },
   getters: {
     isLoggedIn: state => state.isLoggedIn,
@@ -40,6 +44,19 @@ const store = new Vuex.Store({
       state.isAdmin = user.admin
       state.username = user.username
     },
+    addNotification(state, data) {
+      let notification = {
+        uuid: generateUUID(),
+        severity: data.severity,
+        contents: data.contents
+      }
+      state.notifications.push(notification)
+    },
+    dismissNotification(state, uuid) {
+      state.notifications = state.notifications.filter((notification) => {
+        return notification.uuid !== uuid
+      })
+    },
     incLoading(state) {
       state.numLoading += 1
     },
@@ -48,34 +65,16 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    // login(context, credentials) {
-    //   return new Promise((resolve, reject) => {
-    //     context.commit("startLoading")
-    //     API.post("/login", credentials)
-    //       .then(result => {
-    //         let token = result.data.token
-    //         context.commit("loginUser", token)
-    //         return context.dispatch("getProfile")
-    //       })
-    //       .then(profile => {
-    //         console.log("then profile: ", profile)
-    //         resolve()
-    //       })
-    //       .catch(error => {
-    //         console.log(error)
-    //         reject(error)
-    //       })
-    //       .finally(() => {
-    //         context.commit("stopLoading")
-    //       })
-    //   })
-    // },
     async login(context, credentials) {
       context.commit("incLoading")
       try {
         let result = await API.post("/login", credentials)
         let token = result.data.token
         context.commit("loginUser", token)
+        context.commit("addNotification", {
+          "severity": "success",
+          "contents": "Login successful!"
+        })
         await context.dispatch("getProfile")
         return Promise.resolve()
       } catch (err) {
@@ -83,6 +82,13 @@ const store = new Vuex.Store({
       } finally {
         context.commit("subLoading")
       }
+    },
+    createRandomNotification(context) {
+      let notification = {
+        severity: 'success',
+        contents: "Hello World!"
+      }
+      context.commit('addNotification', notification)
     },
     getProfile(context) {
       return new Promise((resolve, reject) => {
@@ -94,7 +100,6 @@ const store = new Vuex.Store({
             resolve(user)
           })
           .catch(error => {
-            console.log(error)
             reject(error)
           })
           .finally(() => {
@@ -111,8 +116,15 @@ const store = new Vuex.Store({
         let result = await API.patch("/me", data)
         let user = result.data
         context.commit("loadUser", user)
+        context.commit("addNotification", {
+          "severity": "success",
+          "contents": "Profile updated!"
+        })
       } catch (err) {
-        console.log(err)
+        context.commit("addNotification", {
+          "severity": "danger",
+          "contents": "Failed to update profile!"
+        })
       } finally {
         context.commit("subLoading")
       }

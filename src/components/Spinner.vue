@@ -1,83 +1,63 @@
 <template>
-  <div class="lds-grid">
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-  </div>
+<div class="cssLoader">Loading...</div>
 </template>
 <style scoped>
-.lds-grid {
-  display: inline-block;
-  position: relative;
-  width: 64px;
-  height: 64px;
-}
-.lds-grid div {
-  position: absolute;
-  width: 13px;
-  height: 13px;
+.cssLoader,
+.cssLoader:before,
+.cssLoader:after {
   border-radius: 50%;
-  background: #cef;
-  animation: lds-grid 1.2s linear infinite;
+  width: 2.5em;
+  height: 2.5em;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation: load7 1.8s infinite ease-in-out;
+  animation: load7 1.8s infinite ease-in-out;
 }
-.lds-grid div:nth-child(1) {
-  top: 6px;
-  left: 6px;
-  animation-delay: 0s;
+.cssLoader {
+  color: rgb(56, 23, 100);
+  font-size: 10px;
+  margin: 80px auto;
+  position: relative;
+  text-indent: -9999em;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
 }
-.lds-grid div:nth-child(2) {
-  top: 6px;
-  left: 26px;
-  animation-delay: -0.4s;
+.cssLoader:before,
+.cssLoader:after {
+  content: '';
+  position: absolute;
+  top: 0;
 }
-.lds-grid div:nth-child(3) {
-  top: 6px;
-  left: 45px;
-  animation-delay: -0.8s;
+.cssLoader:before {
+  left: -3.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
 }
-.lds-grid div:nth-child(4) {
-  top: 26px;
-  left: 6px;
-  animation-delay: -0.4s;
+.cssLoader:after {
+  left: 3.5em;
 }
-.lds-grid div:nth-child(5) {
-  top: 26px;
-  left: 26px;
-  animation-delay: -0.8s;
-}
-.lds-grid div:nth-child(6) {
-  top: 26px;
-  left: 45px;
-  animation-delay: -1.2s;
-}
-.lds-grid div:nth-child(7) {
-  top: 45px;
-  left: 6px;
-  animation-delay: -0.8s;
-}
-.lds-grid div:nth-child(8) {
-  top: 45px;
-  left: 26px;
-  animation-delay: -1.2s;
-}
-.lds-grid div:nth-child(9) {
-  top: 45px;
-  left: 45px;
-  animation-delay: -1.6s;
-}
-@keyframes lds-grid {
+@-webkit-keyframes load7 {
   0%,
+  80%,
   100% {
-    opacity: 1;
+    box-shadow: 0 2.5em 0 -1.3em;
   }
-  50% {
-    opacity: 0.5;
+  40% {
+    box-shadow: 0 2.5em 0 0;
   }
 }
+@keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+
 </style>

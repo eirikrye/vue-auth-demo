@@ -1,6 +1,8 @@
 # vue-auth-demo
 
-## Project setup
+## node
+
+### Project setup
 ```
 npm install
 ```
@@ -25,5 +27,17 @@ npm run test
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## python
+
+### Install
+
+```
+pip3 install -r server/requirements.txt
+```
+
+### Run
+
+```
+cd server
+waitress-serve --listen=127.0.0.1:8181 api:app
+```

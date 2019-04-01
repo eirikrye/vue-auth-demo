@@ -3,9 +3,10 @@
     <div class="container">
       <h1 class="title">Login</h1>
       <h2 class="subtitle">Login to access cool features.</h2>
-      <div class="notification is-danger" v-if="loginFailed && !isChanged">
-        Failed to log in. Incorrect username or password?
-      </div>
+      <div
+        class="notification is-danger"
+        v-if="loginFailed && !isChanged"
+      >Failed to log in. Incorrect username or password?</div>
       <form class="form" @submit.prevent="submitLogin">
         <div class="field">
           <label for class="label">Username</label>
@@ -17,7 +18,7 @@
               v-model="username"
               name="username"
               autocomplete="username"
-            />
+            >
           </div>
         </div>
         <div class="field">
@@ -30,7 +31,7 @@
               v-model="password"
               autocomplete="password"
               name="password"
-            />
+            >
           </div>
         </div>
         <div class="field">
@@ -40,9 +41,7 @@
               type="submit"
               class="button is-link"
               value="Login"
-            >
-              Login
-            </button>
+            >Login</button>
           </div>
         </div>
       </form>
@@ -91,10 +90,9 @@ export default {
           password: this.password
         })
         .then(() => {
-          this.$router.push({ name: "profile" })
+          this.$router.push({ name: "home" })
         })
         .catch(() => {
-          console.log("Login failed!")
           this.loginFailed = true
         })
         .finally(() => {

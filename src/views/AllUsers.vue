@@ -3,15 +3,11 @@
     <div class="container">
       <h1 class="title">All users</h1>
       <div class="columns is-multiline" v-if="hasUsers">
-        <div
-          :key="user.username"
-          class="column is-one-third"
-          v-for="user in users"
-        >
-          <ProfileCard :profile="user.profile" />
+        <div :key="user.username" class="column is-one-third" v-for="user in users">
+          <ProfileCard :profile="user.profile"/>
         </div>
       </div>
-      <Spinner v-else />
+      <Spinner v-else/>
     </div>
   </section>
 </template>
@@ -39,7 +35,6 @@ export default {
       let response = await API.get("/users")
       this.users = response.data
     } catch (err) {
-      console.log(err)
     } finally {
       this.$store.commit("subLoading")
     }

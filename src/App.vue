@@ -3,9 +3,7 @@
     <nav class="navbar is-dark">
       <div class="container">
         <div class="navbar-brand">
-          <router-link :to="{ name: 'home' }" class="navbar-item"
-            >Vue Auth Demo</router-link
-          >
+          <router-link :to="{ name: 'home' }" class="navbar-item">Vue Auth Demo</router-link>
           <div class="navbar-burger" data-target="main-menu">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
@@ -14,40 +12,29 @@
         </div>
         <div class="navbar-menu" id="main-menu">
           <div class="navbar-start" v-if="isLoggedIn && hasProfile">
-            <router-link :to="{ name: 'users' }" class="navbar-item"
-              ><font-awesome-icon
-                icon="users"
-                fixed-width
-              />&nbsp;Users</router-link
-            >
-            <router-link
-              :to="{ name: 'admin' }"
-              class="navbar-item"
-              v-if="isAdmin"
-              ><font-awesome-icon icon="user-secret" fixed-width />&nbsp;Admin
-              Panel</router-link
-            >
+            <router-link :to="{ name: 'users' }" class="navbar-item">
+              <font-awesome-icon icon="users" fixed-width/>&nbsp;Users
+            </router-link>
+            <router-link :to="{ name: 'admin' }" class="navbar-item" v-if="isAdmin">
+              <font-awesome-icon icon="user-secret" fixed-width/>&nbsp;Admin
+              Panel
+            </router-link>
           </div>
           <div class="navbar-end" v-if="!isLoggedIn">
             <router-link :to="{ name: 'login' }" class="navbar-item">
               <span>
-                <font-awesome-icon icon="sign-in-alt" fixed-width />&nbsp;Log in
+                <font-awesome-icon icon="sign-in-alt" fixed-width/>&nbsp;Log in
               </span>
             </router-link>
           </div>
           <div class="navbar-end" v-if="isLoggedIn">
-            <router-link
-              v-if="hasProfile"
-              :to="{ name: 'profile' }"
-              class="navbar-item"
-            >
-              <font-awesome-icon icon="user" fixed-width />
-              &nbsp;Profile&nbsp;
+            <router-link v-if="hasProfile" :to="{ name: 'profile' }" class="navbar-item">
+              <font-awesome-icon icon="user" fixed-width/>&nbsp;Profile&nbsp;
               <sub v-if="hasProfile">({{ username }})</sub>
             </router-link>
             <a @click="logoutUser" class="navbar-item">
               <span>
-                <font-awesome-icon icon="sign-out-alt" fixed-width />&nbsp;Log
+                <font-awesome-icon icon="sign-out-alt" fixed-width/>&nbsp;Log
                 out
               </span>
             </a>
@@ -55,14 +42,17 @@
         </div>
       </div>
     </nav>
-    <progress v-if="isLoading" class="progress is-info loading-bar" />
-    <router-view />
+    <NotificationBox />
+    <progress v-if="isLoading" class="progress is-info loading-bar"/>
+    <router-view/>
   </div>
 </template>
 <script>
 import { mapState, mapGetters } from "vuex"
+import NotificationBox from "@/components/NotificationBox"
 
 export default {
+  components: {NotificationBox},
   computed: {
     ...mapGetters(["isLoading", "hasProfile", "isAdmin", "isLoggedIn"]),
     ...mapState({
@@ -98,7 +88,12 @@ export default {
   methods: {
     logoutUser() {
       this.$store.commit("logoutUser")
+    }
+  },
+  watch: {
+    '$store.state.isLoggedIn': function(value) {
       this.$router.push({ name: "login" })
+      console.log("Login status changed.", value)
     }
   }
 }
@@ -113,5 +108,17 @@ progress.loading-bar {
   position: absolute;
   border-radius: 0;
   height: 4px;
+}
+
+.notification-inbox {
+  z-index: 10;
+  position: fixed;
+  width: 300px;
+  margin-top: 1rem;
+  max-height: 100%;
+  right: 1rem;
+}
+aside.notification-inbox > .notification {
+  margin-bottom: .8rem;
 }
 </style>

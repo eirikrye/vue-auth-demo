@@ -14,6 +14,14 @@ logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
+# If RandomSleepMiddleware is active, for each request
+# sleep for this amount of seconds to emulate a slow
+# connection, allowing time to see spinners, loaders
+# and transitions.
+#
+# Set to 0 to disable sleep.
+RANDOM_SLEEP_TIME = 0
+
 users = {
     "eirik.rye@gmail.com": {
         "id": 1,
@@ -32,7 +40,7 @@ users = {
     "ola.nordmann@gmail.com": {
         "id": 3,
         "username": "ola.nordmann@gmail.com",
-        "password": "ola01",
+        "password": "ola2306",
         "admin": False,
         "profile": {"fullName": "Ola Nordmann", "favouriteAnimal": "Cat"},
     },
@@ -112,10 +120,7 @@ class UsersResource:
 
 class RandomSleepMiddleware:
     def process_response(self, req: Request, resp, resource, req_succeeded):
-        """Uncomment this to have requests randomly sleep, in order to
-        see all the cool loading animations in the web interface."""
-
-        # time.sleep(random.random() * 4)
+        time.sleep(random.random() * RANDOM_SLEEP_TIME)
 
 
 class LoggerMiddleware:
@@ -124,6 +129,7 @@ class LoggerMiddleware:
 
 
 app = falcon.API(middleware=[LoggerMiddleware(), RandomSleepMiddleware()])
+
 app.add_route("/login", LoginResource())
 app.add_route("/me", ProfileResource())
 app.add_route("/users", UsersResource())
