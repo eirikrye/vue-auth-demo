@@ -4,16 +4,16 @@
       <div class="container">
         <div class="navbar-brand">
           <router-link :to="{ name: 'home' }" class="navbar-item">Vue Auth Demo</router-link>
-          <div class="navbar-burger" data-target="main-menu">
+          <div class="navbar-burger" ref="navbarBurger">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
           </div>
         </div>
-        <div class="navbar-menu" id="main-menu">
+        <div class="navbar-menu" ref="navbarMenu">
           <div class="navbar-start" v-if="isLoggedIn && hasProfile">
             <router-link :to="{ name: 'users' }" class="navbar-item">
-              <font-awesome-icon icon="users" fixed-width/>&nbsp;Users
+              <font-awesome-icon icon="users" fixed-width/>&nbsp;All Users
             </router-link>
             <router-link :to="{ name: 'admin' }" class="navbar-item" v-if="isAdmin">
               <font-awesome-icon icon="user-secret" fixed-width/>&nbsp;Admin
@@ -29,8 +29,8 @@
           </div>
           <div class="navbar-end" v-if="isLoggedIn">
             <router-link v-if="hasProfile" :to="{ name: 'profile' }" class="navbar-item">
-              <font-awesome-icon icon="user" fixed-width/>&nbsp;Profile&nbsp;
-              <sub v-if="hasProfile">({{ username }})</sub>
+              <font-awesome-icon icon="user" fixed-width/>&nbsp;Profile
+              <span v-if="hasProfile">&nbsp;({{ username }})</span>
             </router-link>
             <a @click="logoutUser" class="navbar-item">
               <span>
@@ -42,7 +42,7 @@
         </div>
       </div>
     </nav>
-    <NotificationBox />
+    <NotificationBox/>
     <progress v-if="isLoading" class="progress is-info loading-bar"/>
     <router-view/>
   </div>
@@ -52,7 +52,7 @@ import { mapState, mapGetters } from "vuex"
 import NotificationBox from "@/components/NotificationBox"
 
 export default {
-  components: {NotificationBox},
+  components: { NotificationBox },
   computed: {
     ...mapGetters(["isLoading", "hasProfile", "isAdmin", "isLoggedIn"]),
     ...mapState({
@@ -60,40 +60,40 @@ export default {
       fullName: state => state.userProfile && state.userProfile.fullName
     })
   },
-  created() {
-    document.addEventListener("DOMContentLoaded", () => {
-      // Get all "navbar-burger" elements
-      const $navbarBurgers = Array.prototype.slice.call(
-        document.querySelectorAll(".navbar-burger"),
-        0
-      )
-
-      // Check if there are any navbar burgers
-      if ($navbarBurgers.length > 0) {
-        // Add a click event on each of them
-        $navbarBurgers.forEach(el => {
-          el.addEventListener("click", () => {
-            // Get the target from the "data-target" attribute
-            const target = el.dataset.target
-            const $target = document.getElementById(target)
-
-            // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-            el.classList.toggle("is-active")
-            $target.classList.toggle("is-active")
-          })
-        })
-      }
-    })
+  mounted() {
+    this.setupMenu()
   },
   methods: {
+    closeMenu() {
+      let burger = this.$refs.navbarBurger
+      let menu = this.$refs.navbarMenu
+      menu.classList.remove("is-active")
+      burger.classList.remove("is-active")
+    },
+    setupMenu() {
+      let burger = this.$refs.navbarBurger
+      let menu = this.$refs.navbarMenu
+      burger.addEventListener("click", () => {
+        burger.classList.toggle("is-active")
+        menu.classList.toggle("is-active")
+      })
+    },
     logoutUser() {
       this.$store.commit("logoutUser")
     }
   },
   watch: {
-    '$store.state.isLoggedIn': function(value) {
-      this.$router.push({ name: "login" })
-      console.log("Login status changed.", value)
+    "$store.state.isLoggedIn": function(isLoggedIn) {
+      if (!isLoggedIn) {
+        this.$router.push({ name: "login" })
+        this.$store.commit("addNotification", {
+          severity: "warning",
+          contents: "You have been logged out."
+        })
+      }
+    },
+    $route: function() {
+      this.closeMenu()
     }
   }
 }
@@ -119,6 +119,6 @@ progress.loading-bar {
   right: 1rem;
 }
 aside.notification-inbox > .notification {
-  margin-bottom: .8rem;
+  margin-bottom: 0.8rem;
 }
 </style>
