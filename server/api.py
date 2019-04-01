@@ -14,43 +14,48 @@ logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
-# If RandomSleepMiddleware is active, for each request
-# sleep for this amount of seconds to emulate a slow
-# connection, allowing time to see spinners, loaders
-# and transitions.
+# If RandomSleepMiddleware is active, for each request sleep for this
+# amount of seconds to emulate a slow connection, allowing time to see
+# spinners, loaders and transitions.
 #
 # Set to 0 to disable sleep.
 RANDOM_SLEEP_TIME = 0
 
 users = {
     "eirik.rye@gmail.com": {
-        "id": 1,
-        "username": "eirik.rye@gmail.com",
         "password": "eirik123",
         "admin": True,
         "profile": {"fullName": "Eirik Rye", "favouriteAnimal": "Bird"},
     },
     "henrik.gabrielsen@gmail.com": {
-        "id": 2,
-        "username": "henrik.gabrielsen@gmail.com",
         "password": "gabbeh2102",
         "admin": False,
         "profile": {"fullName": "Henrik Gabrielsen", "favouriteAnimal": "Sloth"},
     },
     "ola.nordmann@gmail.com": {
-        "id": 3,
-        "username": "ola.nordmann@gmail.com",
         "password": "ola2306",
         "admin": False,
         "profile": {"fullName": "Ola Nordmann", "favouriteAnimal": "Cat"},
     },
 }
 
+# Enumerate the users and add an ID and username:
+for user_id, (username, user) in enumerate(users.items()):
+    user.update({
+        "username": username,
+        "id": user_id
+    })
+
 # Used to store a mapping between API tokens and usernames
 tokens: Dict[str, str] = {}
 
 
 def authenticate(req: Request, resp: Response, resource, params):
+    """Falcon hook to ensure a request is authenticated.
+    
+    If successful, a user object is made available to the
+    request context.
+    """
     if not req.auth:
         raise falcon.HTTPUnauthorized("Please provide token.")
 
@@ -63,6 +68,7 @@ def authenticate(req: Request, resp: Response, resource, params):
 
 
 class LoginResource:
+    """Resource to authenticate and return API token."""
     def on_post(self, req: Request, resp: Response):
         data: dict = json.load(req.stream)
         username = data.get("username", "").lower()
@@ -84,9 +90,11 @@ class LoginResource:
 
 @falcon.before(authenticate)
 class ProfileResource:
+    """Resource to view and update user profile."""
     def on_get(self, req: Request, resp: Response):
         user = req.context["user"]
         resp.media = {
+            "id": user["id"],
             "username": user["username"],
             "admin": user["admin"],
             "profile": user["profile"],
@@ -99,6 +107,7 @@ class ProfileResource:
         user.update(data)
 
         resp.media = {
+            "id": user["id"],
             "username": user["username"],
             "admin": user["admin"],
             "profile": user["profile"],
@@ -107,6 +116,7 @@ class ProfileResource:
 
 @falcon.before(authenticate)
 class UsersResource:
+    """Resource to list users."""
     def on_get(self, req: Request, resp: Response):
         resp.media = [
             {
