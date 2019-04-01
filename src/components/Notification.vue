@@ -1,6 +1,6 @@
 <template>
-  <div class="notification" :class="notificationClasses">
-    <button class="delete" @click="dismissNotification"></button>
+  <div class="notification" :class="notificationClasses" @click="dismissNotification">
+    <button class="delete"></button>
     {{notification.contents}}
   </div>
 </template>

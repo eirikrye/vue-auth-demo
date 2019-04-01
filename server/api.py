@@ -41,10 +41,7 @@ users = {
 
 # Enumerate the users and add an ID and username:
 for user_id, (username, user) in enumerate(users.items()):
-    user.update({
-        "username": username,
-        "id": user_id
-    })
+    user.update({"username": username, "id": user_id})
 
 # Used to store a mapping between API tokens and usernames
 tokens: Dict[str, str] = {}
@@ -69,6 +66,7 @@ def authenticate(req: Request, resp: Response, resource, params):
 
 class LoginResource:
     """Resource to authenticate and return API token."""
+
     def on_post(self, req: Request, resp: Response):
         data: dict = json.load(req.stream)
         username = data.get("username", "").lower()
@@ -91,6 +89,7 @@ class LoginResource:
 @falcon.before(authenticate)
 class ProfileResource:
     """Resource to view and update user profile."""
+
     def on_get(self, req: Request, resp: Response):
         user = req.context["user"]
         resp.media = {
@@ -117,6 +116,7 @@ class ProfileResource:
 @falcon.before(authenticate)
 class UsersResource:
     """Resource to list users."""
+
     def on_get(self, req: Request, resp: Response):
         resp.media = [
             {
