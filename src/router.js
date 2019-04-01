@@ -1,65 +1,75 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Home from './views/Home.vue'
-import Login from './views/Login.vue'
-import UserProfile from './views/UserProfile.vue'
-import Admin from './views/Admin.vue'
-import store from './store'
+import Vue from "vue"
+import Router from "vue-router"
+import store from "./store"
+
+
+import Home from "./views/Home.vue"
+import Login from "./views/Login.vue"
+import UserProfile from "./views/UserProfile.vue"
+import AllUsers from './views/AllUsers.vue'
+import Admin from "./views/Admin.vue"
 
 Vue.use(Router)
 
 function adminGuard(to, from, next) {
-  if(store.state.isLoggedIn) {
-    if(store.state.profile.admin) {
+  if (store.getters.isLoggedIn) {
+    if (store.getters.isAdmin) {
       next()
     } else {
       next(false)
     }
   } else {
-    next({name: 'login'})
+    next({ name: "login" })
   }
 }
 
 function authenticatedGuard(to, from, next) {
-  if(store.state.isLoggedIn) {
+  if (store.state.isLoggedIn) {
     next()
   } else {
-    next({name: 'login'})
+    next({ name: "login" })
   }
 }
 
 function unauthenticatedGuard(to, from, next) {
-  if(store.state.isLoggedIn) {
-    next({name: 'profile'})
+  if (store.state.isLoggedIn) {
+    next({ name: "profile" })
   } else {
     next()
   }
 }
 
 export default new Router({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
+  linkExactActiveClass: 'is-active',
   routes: [
     {
-      path: '/',
-      name: 'home',
+      path: "/",
+      name: "home",
       component: Home
     },
     {
-      path: '/profile',
-      name: 'profile',
+      path: "/me",
+      name: "profile",
       component: UserProfile,
       beforeEnter: authenticatedGuard
     },
     {
-      path: '/login',
-      name: 'login',
+      path: "/users",
+      name: "users",
+      component: AllUsers,
+      beforeEnter: authenticatedGuard
+    },
+    {
+      path: "/login",
+      name: "login",
       component: Login,
       beforeEnter: unauthenticatedGuard
     },
     {
-      path: '/admin',
-      name: 'admin',
+      path: "/admin",
+      name: "admin",
       component: Admin,
       beforeEnter: adminGuard
     }

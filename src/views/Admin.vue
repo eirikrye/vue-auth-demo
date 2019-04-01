@@ -6,11 +6,11 @@
   </section>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapState } from "vuex"
 export default {
   name: "Admin",
   computed: mapState({
     isLoggedIn: state => state.isLoggedIn
   })
-};
+}
 </script>
