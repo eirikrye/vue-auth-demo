@@ -4,7 +4,7 @@ Example Vue application with simple Python backend server to demonstrate buildin
 
 `npm run serve` will automatically proxy API requests to the python server running at `localhost:8181` (see below).
 
-## node
+## Node
 
 ### Project setup
 ```
@@ -31,17 +31,23 @@ npm run test
 npm run lint
 ```
 
-## python
+## Python
 
 ### Install
 
 ```
-pip3 install -r server/requirements.txt
+cd server
+pip3 install -r requirements.txt
 ```
 
 ### Run
 
 ```
-cd server
-waitress-serve --listen=127.0.0.1:8181 api:app
+waitress-serve --listen=localhost:8181 api:app
+```
+
+or, using gunicorn:
+
+```
+gunicorn -b localhost:8181 api:app --reload
 ```
