@@ -92,7 +92,8 @@ export default {
         .then(() => {
           this.$router.push({ name: "home" })
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err)
           this.loginFailed = true
         })
         .finally(() => {
