@@ -1,11 +1,18 @@
 {
   "name": "vue-auth-demo",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.1",
+  "homepage": "https://bitbucket.org/eirikrye/vue-auth-demo"
+  "private": false,
+  "license": "MIT",
+  "author": "Eirik Rye <rye@trojka.no> (https://trojka.no)",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:eirikrye/vue-auth-demo.git"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.17",
